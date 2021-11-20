@@ -94,12 +94,17 @@ class Crawler:
             detections = detector.detectObjectsFromImage(input_image=inpath, output_image_path=outpath)
             print('Object recognition done on {}/{}{}.jpg'.format(downloadFolder, cameraID, timestampStr))
 
-            l=0
+            counts = {}
             for j in detections:
-                if j["name"]=="person":
-                    l=l+1
-            line = timestampStr + "\t" + str(l) + "\n"
-
+                if j["name"] not in counts.keys():
+                    counts[j["name"]] = 0
+                counts[j["name"]] += 1
+                
+            line = timestampStr + "\n"
+            for key in counts.keys():
+                line += key + " " + str(counts[key]) + "\n"
+            line += "-------------------------\n"
+            
             filepath = execution_path + "/" + cameraID + ".txt"
             with open(filepath, 'a') as f:
                 f.write(line)
